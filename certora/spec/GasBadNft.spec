@@ -4,24 +4,23 @@
  * This spec is technically unsound because we make summaries about the functions, and are using optimistic fallback
  */ 
 
-using GasBadNftMarketplace as gasBadMarketplace; 
-using NftMock as nft;
+using GasBadNftMarketplace as gasBadMarketplace;
 using NftMarketplace as marketplace;
 
 // The methods that we acknowledge in CVL 
 methods {
-    function buyItem(address,uint256) external;
-    function cancelListing(address,uint256) external;
-    function listItem(address,uint256,uint256) external;
-    function withdrawProceeds() external;
-    function updateListing(address,uint256,uint256) external;
+    // function buyItem(address,uint256) external;
+    // function cancelListing(address,uint256) external;
+    // function listItem(address,uint256,uint256) external;
+    // function withdrawProceeds() external;
+    // function updateListing(address,uint256,uint256) external;
 
     // View Functions
     function getListing(address,uint256) external returns (INftMarketplace.Listing) envfree;
     function getProceeds(address) external returns (uint256) envfree;
 
     // View Summary Example
-    function _.onERC721Received(address, address, uint256, bytes) external => ALWAYS(1); 
+    function _.onERC721Received(address, address, uint256, bytes) external => DISPATCHER(true); 
     // Dispatcher Summary Example, means the safeTransferFrom function will only be called by an NftMock
     function _.safeTransferFrom(address,address,uint256) external => DISPATCHER(true);
 }
@@ -40,12 +39,12 @@ ghost mathint log4Count {
 }
 
 // Can't do `s_listings[KEY address nftAddress][KEY uint256 tokenId]` since that returns a struct
-hook Sstore s_listings[KEY address nftAddress][KEY uint256 tokenId].price uint256 price STORAGE {
+hook Sstore s_listings[KEY address nftAddress][KEY uint256 tokenId].price uint256 price {
     listingUpdatesCount = listingUpdatesCount + 1;
 }
 
 // Hooks don't get applied sequentially. 
-hook LOG4(uint offset, uint length, bytes32 t1, bytes32 t2, bytes32 t3, bytes32 t4) uint v {
+hook LOG4(uint offset, uint length, bytes32 t1, bytes32 t2, bytes32 t3, bytes32 t4) {
     log4Count = log4Count + 1;
 }
 

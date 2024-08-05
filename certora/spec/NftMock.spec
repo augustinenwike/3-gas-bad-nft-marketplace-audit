@@ -2,7 +2,7 @@
  * Certora Formal Verification Spec for NftMock
  */ 
 
-using NftMock as nft;
+// using NftMock as nft;
 
 
 methods {
@@ -26,15 +26,15 @@ rule minting_mints_one_nft() {
 
     // This could be uint256 or mathint
     // You could do `balanceOf(minter)` instead of `nft.balanceOf(minter)` but I like to be explicit
-    mathint balanceBefore = nft.balanceOf(minter);
+    mathint balanceBefore = balanceOf(minter);
 
     // Act 
     currentContract.mint(e); 
-    // We could also do `nft.mint(e)` 
+    // We could also do `mint(e)` 
     // or just `mint(e)` 
 
     // Assert
-    assert to_mathint(nft.balanceOf(minter)) == balanceBefore + 1, "Only 1 NFT should be minted";
+    assert to_mathint(balanceOf(minter)) == balanceBefore + 1, "Only 1 NFT should be minted";
 }
 
 // This is known as a parametric rule, as there is a variable of type "method", which we named `f`
@@ -44,7 +44,7 @@ rule sanity {
     env e;
     calldataarg arg;
     method f;
-    nft.f(e, arg);
+    f(e, arg);
     satisfy true;
 }
 
